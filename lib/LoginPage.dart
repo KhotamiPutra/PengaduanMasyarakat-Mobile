@@ -15,18 +15,25 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  Future<void> login(String username, String password) async {
-    final response = await http
-        .post(Uri.parse('http://10.0.2.2:8000/api/login'), body: {
-      "username": usernameController.text,
-      "password": passwordController.text
-    });
-    final data = jsonDecode(response.body);
+  Future<void> login() async {
+    final response = await http.post(
+      Uri.parse('http://10.0.2.2:8000/api/login'),
+      body: {
+        "username": usernameController.text,
+        "password": passwordController.text,
+      },
+    );
 
     if (response.statusCode == 200) {
-      print("Login Berhasil: ${data['user']}");
+      final data = jsonDecode(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Login Berhasil: ${data['nama']}")),
+      );
     } else {
-      print("Login Gagal: ${data['message']}");
+      final data = jsonDecode(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Login Gagal: ${data['message']}")),
+      );
     }
   }
 
@@ -83,7 +90,8 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       TextFormField(
                         controller: usernameController,
-                        decoration: const InputDecoration(labelText: "Username"),
+                        decoration:
+                            const InputDecoration(labelText: "Username"),
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Username tidak boleh kosong';
@@ -93,7 +101,8 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       TextFormField(
                         controller: passwordController,
-                        decoration: const InputDecoration(labelText: "Password"),
+                        decoration:
+                            const InputDecoration(labelText: "Password"),
                         obscureText: true,
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -110,7 +119,9 @@ class _LoginPageState extends State<LoginPage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFD97757),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          login(); // Panggil fungsi login
+                        },
                         child: const Text(
                           "Login",
                           style: TextStyle(color: Colors.white),
