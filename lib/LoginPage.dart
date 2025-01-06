@@ -12,28 +12,40 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  bool _isLoading = false;
   Future<void> login() async {
-    final response = await http.post(
-      Uri.parse('http://10.0.2.2:8000/api/login'),
-      body: {
-        "username": usernameController.text,
-        "password": passwordController.text,
-      },
-    );
+    setState(() {
+      _isLoading = true;
+    });
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Login Berhasil: ${data['nama']}")),
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:8000/api/login'),
+        body: {
+          "username": usernameController.text,
+          "password": passwordController.text,
+        },
       );
-    } else {
-      final data = jsonDecode(response.body);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Login Gagal: ${data['message']}")),
-      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Login Berhasil: ${data['nama']}")),
+        );
+      } else {
+        final data = jsonDecode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Login Gagal: ${data['message']}")),
+        );
+      }
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -84,6 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                     )
                   ]),
               child: Form(
+                key: _formKey,
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -119,14 +132,25 @@ class _LoginPageState extends State<LoginPage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFD97757),
                         ),
-                        onPressed: () {
-                          login(); // Panggil fungsi login
-                        },
+                        onPressed: _isLoading
+                            ? null
+                            : () {
+                                if (_formKey.currentState!.validate()) {
+                                  login();
+                                }
+                              },
                         child: const Text(
                           "Login",
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
+                      if (_isLoading)
+                        Container(
+                          color: Colors.black.withOpacity(0.5),
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
                     ],
                   ),
                 ),

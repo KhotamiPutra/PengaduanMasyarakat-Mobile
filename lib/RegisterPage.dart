@@ -164,7 +164,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                   ),
-                  if (_isLoading) // Overlay loading
+                  if (_isLoading)
                     Container(
                       color: Colors.black.withOpacity(0.5),
                       child: const Center(
