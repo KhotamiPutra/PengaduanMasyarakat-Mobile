@@ -34,11 +34,25 @@ dependencies:
   flutter_svg: ^2.0.16
   http: ^1.2.2
   introduction_screen: ^3.1.14
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_lints: ^4.0.0
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.9
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/logo.png"
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/icon/logo.png
+  android: true
+  ios: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
